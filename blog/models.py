@@ -19,7 +19,9 @@ class PostQuerySet(models.QuerySet):
         posts_ids = [post.id for post in self]
         posts_with_comments = Post.objects.filter(id__in=posts_ids) \
                                   .annotate(Count('comments'))
-        ids_and_comments = posts_with_comments.values_list('id', 'comments__count')
+        ids_and_comments = posts_with_comments.values_list(
+            'id', 'comments__count'
+        )
         count_for_id = dict(ids_and_comments)
         for post in self:
             post.comments__count = count_for_id[post.id]
@@ -38,9 +40,18 @@ class Post(models.Model):
     image = models.ImageField("Картинка")
     published_at = models.DateTimeField("Дата и время публикации")
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор", limit_choices_to={'is_staff': True})
-    likes = models.ManyToManyField(User, related_name="liked_posts", verbose_name="Кто лайкнул", blank=True)
-    tags = models.ManyToManyField("Tag", related_name="posts", verbose_name="Теги")
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Автор",
+        limit_choices_to={'is_staff': True}
+    )
+    likes = models.ManyToManyField(
+        User, related_name="liked_posts",
+        verbose_name="Кто лайкнул", blank=True
+    )
+    tags = models.ManyToManyField(
+        "Tag", related_name="posts",
+        verbose_name="Теги"
+    )
 
     objects = PostQuerySet.as_manager()
 
@@ -86,7 +97,10 @@ class Comment(models.Model):
         "Post", on_delete=models.CASCADE,
         verbose_name="Пост, к которому написан",
         related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор")
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        verbose_name="Автор"
+    )
 
     text = models.TextField("Текст комментария")
     published_at = models.DateTimeField("Дата и время публикации")
