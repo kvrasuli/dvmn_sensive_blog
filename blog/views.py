@@ -92,7 +92,7 @@ def post_detail(request, slug):
 
 def tag_filter(request, tag_title):
     tag = get_object_or_404(Tag, title=tag_title)
-    related_posts = tag.posts.prefetch_tags_with_posts_count()[:20] \
+    related_posts = tag.posts.prefetch_tags_with_posts_count() \
                              .prefetch_related('author')[:20] \
                              .fetch_with_comments_count()
     most_popular_tags = Tag.objects.popular()[:5]
